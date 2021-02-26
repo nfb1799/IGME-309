@@ -275,17 +275,16 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Release();
 	Init();
 
-	// Replace this with your code
 	std::vector<vector3> vertex;
-	vector3 baseCenter = vector3(0, 0, -a_fHeight / 2);
-	vector3 tip = vector3(0, 0, a_fHeight / 2);
+	vector3 baseCenter = vector3(0, -a_fHeight / 2, 0);
+	vector3 tip = vector3(0, a_fHeight / 2, 0);
 	GLfloat theta = 0;
 	GLfloat delta = static_cast<GLfloat>(2 * PI / a_nSubdivisions);
 
 	//Fills vector with all vertex points
 	for (int i = 0; i < a_nSubdivisions; i++)
 	{
-		vector3 temp = vector3(cos(theta) * a_fRadius, sin(theta) * a_fRadius, -a_fHeight / 2);
+		vector3 temp = vector3(sin(theta) * a_fRadius, -a_fHeight / 2, cos(theta) * a_fRadius);
 		theta += delta;
 		vertex.push_back(temp);
 	}
@@ -296,7 +295,6 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 		AddTri(baseCenter, vertex[i], vertex[(i + 1) % a_nSubdivisions]);
 		AddTri(vertex[i], tip, vertex[(i + 1) % a_nSubdivisions]);
 	}
-	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -318,43 +316,28 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Release();
 	Init();
 
-	// Replace this with your code
-	std::vector<vector3> vertex1;
-	std::vector<vector3> vertex2;
-	vector3 center1 = vector3(0, 0, -a_fHeight / 2);
-	vector3 center2 = vector3(0, 0, a_fHeight / 2);
+	std::vector<vector3> vertexBot;
+	std::vector<vector3> vertexTop;
+	vector3 centerBot = vector3(0, -a_fHeight / 2,0 );
+	vector3 centerTop = vector3(0, a_fHeight / 2, 0);
 	GLfloat theta = 0;
 	GLfloat delta = static_cast<GLfloat>(2 * PI / a_nSubdivisions);
 	
-	//Vertices for first face
+	//Vertices for bottom and top faces
 	for (int i = 0; i < a_nSubdivisions; i++)
 	{
-		vector3 temp = vector3(cos(theta) * a_fRadius, sin(theta) * a_fRadius, -a_fHeight / 2);
+		vertexBot.push_back(vector3(sin(theta) * a_fRadius, -a_fHeight / 2, cos(theta) * a_fRadius));
+		vertexTop.push_back(vector3(sin(theta) * a_fRadius, a_fHeight / 2, cos(theta) * a_fRadius));
 		theta += delta;
-		vertex1.push_back(temp);
 	}
 
-	//Adds tris from base to the center of the base
+	//Adds tris from perimeters to their center points and add quads connecting the bottom and top faces
 	for (int i = 0; i < a_nSubdivisions; i++)
 	{
-		AddTri(vertex1[i], center1, vertex1[(i + 1) % a_nSubdivisions]);
+		AddTri(vertexBot[i], centerBot, vertexBot[(i + 1) % a_nSubdivisions]);
+		AddTri(centerTop, vertexTop[i], vertexTop[(i + 1) % a_nSubdivisions]);
+		AddQuad(vertexBot[i], vertexBot[(i + 1) % a_nSubdivisions], vertexTop[i], vertexTop[(i + 1) % a_nSubdivisions]);
 	}
-
-	//Vertices for second face
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		vector3 temp = vector3(cos(theta) * a_fRadius, sin(theta) * a_fRadius, a_fHeight / 2);
-		theta += delta;
-		vertex2.push_back(temp);
-	}
-
-	//Adds tris from top base to center and adds quads from bottom to top
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		AddTri(center2, vertex2[i], vertex2[(i + 1) % a_nSubdivisions]);
-		AddQuad(vertex1[i], vertex1[(i + 1) % a_nSubdivisions], vertex2[i], vertex2[(i + 1) % a_nSubdivisions]);
-	}
-	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -382,7 +365,6 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Release();
 	Init();
 
-	// Replace this with your code
 	std::vector<vector3> vertexInnerBot;
 	std::vector<vector3> vertexOuterBot;
 	std::vector<vector3> vertexOuterTop;
@@ -390,23 +372,22 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	GLfloat theta = 0;
 	GLfloat delta = static_cast<GLfloat>(2 * PI / a_nSubdivisions);
 
-	//Vertices for inner bottom circle
+	//Vertices for all edges of the tube
 	for (int i = 0; i < a_nSubdivisions; i++)
 	{
-		vertexInnerBot.push_back(vector3(cos(theta) * a_fInnerRadius, sin(theta) * a_fInnerRadius, -a_fHeight / 2)); //inner bottom vertices
-		vertexOuterBot.push_back(vector3(cos(theta) * a_fOuterRadius, sin(theta) * a_fOuterRadius, -a_fHeight / 2)); //outer bottom vertices
-		vertexInnerTop.push_back(vector3(cos(theta) * a_fInnerRadius, sin(theta) * a_fInnerRadius, a_fHeight / 2)); //inner top vertices
-		vertexOuterTop.push_back(vector3(cos(theta) * a_fOuterRadius, sin(theta) * a_fOuterRadius, a_fHeight / 2)); //outer top vertices
+		vertexInnerBot.push_back(vector3(sin(theta) * a_fInnerRadius, -a_fHeight / 2, cos(theta) * a_fInnerRadius)); //inner bottom vertices
+		vertexOuterBot.push_back(vector3(sin(theta) * a_fOuterRadius, -a_fHeight / 2, cos(theta) * a_fOuterRadius)); //outer bottom vertices
+		vertexInnerTop.push_back(vector3(sin(theta) * a_fInnerRadius, a_fHeight / 2, cos(theta) * a_fInnerRadius)); //inner top vertices
+		vertexOuterTop.push_back(vector3(sin(theta) * a_fOuterRadius, a_fHeight / 2, cos(theta) * a_fOuterRadius)); //outer top vertices
 		theta += delta;
 	}
 	for (int i = 0; i < a_nSubdivisions; i++)
 	{
-		AddQuad(vertexInnerBot[i], vertexInnerBot[(i + 1) % a_nSubdivisions], vertexOuterBot[i], vertexOuterBot[(i + 1) % a_nSubdivisions]);
-		AddQuad(vertexInnerTop[i], vertexInnerTop[(i + 1) % a_nSubdivisions], vertexInnerBot[i], vertexInnerBot[(i + 1) % a_nSubdivisions]);
-		AddQuad(vertexOuterBot[i], vertexOuterBot[(i + 1) % a_nSubdivisions], vertexOuterTop[i], vertexOuterTop[(i + 1) % a_nSubdivisions]);
-		AddQuad(vertexOuterTop[i], vertexOuterTop[(i + 1) % a_nSubdivisions], vertexInnerTop[i], vertexInnerTop[(i + 1) % a_nSubdivisions]);
+		AddQuad(vertexInnerBot[i], vertexInnerBot[(i + 1) % a_nSubdivisions], vertexOuterBot[i], vertexOuterBot[(i + 1) % a_nSubdivisions]); //bottom face
+		AddQuad(vertexInnerTop[i], vertexInnerTop[(i + 1) % a_nSubdivisions], vertexInnerBot[i], vertexInnerBot[(i + 1) % a_nSubdivisions]); //inside faces
+		AddQuad(vertexOuterBot[i], vertexOuterBot[(i + 1) % a_nSubdivisions], vertexOuterTop[i], vertexOuterTop[(i + 1) % a_nSubdivisions]); //outside faces
+		AddQuad(vertexOuterTop[i], vertexOuterTop[(i + 1) % a_nSubdivisions], vertexInnerTop[i], vertexInnerTop[(i + 1) % a_nSubdivisions]); //top faces
 	}
-	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -436,12 +417,11 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	Release();
 	Init();
 
-	// Replace this with your code
 	GLfloat a = (a_fOuterRadius - a_fInnerRadius) / 2;
 	GLfloat c = a_fInnerRadius + a;
 
-	GLfloat deltaCircle = static_cast<GLfloat>(2 * PI / a_nSubdivisionsA); // angle around the tube circle
-	GLfloat deltaTorus = static_cast<GLfloat>(2 * PI / a_nSubdivisionsB); // angle around the whole torus
+	GLfloat deltaCircle = static_cast<GLfloat>(2 * PI / a_nSubdivisionsA); // angle around the current circle
+	GLfloat deltaTorus = static_cast<GLfloat>(2 * PI / a_nSubdivisionsB); // angle around the entire torus
 
 
 	/*	2---4
@@ -465,7 +445,6 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 			AddQuad(vert1, vert2, vert3, vert4);
 		}
 	}
-	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -488,9 +467,8 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	Release();
 	Init();
 
-	// Replace this with your code
-	GLfloat deltaT = static_cast<GLfloat>(2 * PI / a_nSubdivisions);
-	GLfloat deltaP = static_cast<GLfloat>(PI / a_nSubdivisions);
+	GLfloat deltaT = static_cast<GLfloat>(2 * PI / a_nSubdivisions); // horizontal angle
+	GLfloat deltaP = static_cast<GLfloat>(PI / a_nSubdivisions); // vertical angle
 	
 	/*	1---3
 	*	|  /|
@@ -513,7 +491,6 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 			AddQuad(vert1, vert2, vert3, vert4);
 		}
 	}
-	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
