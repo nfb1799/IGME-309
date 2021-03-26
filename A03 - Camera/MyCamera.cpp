@@ -194,9 +194,9 @@ void MyCamera::ChangePitch(float a_fDegree)
 	m_v3Above = (m_qRotation * (m_v3Above - m_v3Position)) + m_v3Position;
 
 	//Rotate local cooradinates
-	m_v3Right = m_qRotation * m_v3Right;
-	m_v3Forward = m_qRotation * m_v3Forward;
-	m_v3Up = m_qRotation * m_v3Up;
+	m_v3Right = glm::normalize(m_qRotation * m_v3Right);
+	m_v3Forward = glm::normalize(m_qRotation * m_v3Forward);
+	m_v3Up = glm::normalize(m_qRotation * m_v3Up);
 }
 
 void MyCamera::ChangeYaw(float a_fDegree)
@@ -215,7 +215,7 @@ void MyCamera::ChangeYaw(float a_fDegree)
 	m_v3Above = (m_qRotation * (m_v3Above - m_v3Position)) + m_v3Position;
 
 	//Rotate local coordinates
-	m_v3Right = m_qRotation * m_v3Right;
-	m_v3Forward = m_qRotation * m_v3Forward;
-	m_v3Up = m_qRotation * m_v3Up;
+	m_v3Right = glm::normalize(m_qRotation * m_v3Right);
+	m_v3Forward = glm::normalize(m_qRotation * m_v3Forward);
+	m_v3Up = glm::normalize(m_qRotation * m_v3Up);
 }
