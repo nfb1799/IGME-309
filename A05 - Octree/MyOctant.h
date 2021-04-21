@@ -38,6 +38,8 @@ namespace Simplex
 		MyOctant* m_pRoot = nullptr;//Root octant
 		std::vector<MyOctant*> m_lChild; //list of nodes that contain objects (this will be applied to root only)
 
+		
+
 	public: 
 
 		//Constructor with max subdivisions and ideal entity count

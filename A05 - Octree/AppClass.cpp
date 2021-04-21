@@ -31,6 +31,7 @@ void Application::InitVariables(void)
 	}
 	m_uOctantLevels = 1;
 	m_pRoot = new MyOctant(m_uOctantLevels, 5);
+	m_bDisplay = true;
 	m_pEntityMngr->Update();
 }
 void Application::Update(void)
@@ -56,10 +57,13 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	if (m_uOctantID == -1)
-		m_pRoot->Display();
-	else
-		m_pRoot->Display(m_uOctantID);
+	if (m_bDisplay)
+	{
+		if (m_uOctantID == -1)
+			m_pRoot->Display();
+		else
+			m_pRoot->Display(m_uOctantID);
+	}
 
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();

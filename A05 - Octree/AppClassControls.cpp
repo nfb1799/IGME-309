@@ -139,6 +139,8 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 			m_pRoot = new MyOctant(m_uOctantLevels, 5);
 		}
 		break;
+	case sf::Keyboard::Insert:
+		m_bDisplay = !m_bDisplay;
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
 		m_bModifier = false;
